@@ -1,9 +1,9 @@
-package stakashka.scm.api.db;
+package stakashka.ssm.api.db;
 
-import stakashka.scm.core.data.Column;
-import stakashka.scm.core.data.DataTypes.NormalizedTypes;
-import stakashka.scm.core.data.Schema;
-import stakashka.scm.core.data.Table;
+import stakashka.ssm.core.data.Column;
+import stakashka.ssm.core.data.DataTypes.NormalizedTypes;
+import stakashka.ssm.core.data.Schema;
+import stakashka.ssm.core.data.Table;
 
 import java.sql.*;
 import java.util.HashMap;

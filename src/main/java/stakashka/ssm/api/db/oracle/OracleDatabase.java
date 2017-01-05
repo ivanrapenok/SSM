@@ -1,10 +1,10 @@
-package stakashka.scm.api.db.oracle;
+package stakashka.ssm.api.db.oracle;
 
-import stakashka.scm.api.db.AbstractDatabase;
-import stakashka.scm.api.db.TypesTemplates;
-import stakashka.scm.core.data.Column;
-import stakashka.scm.core.data.DataTypes;
-import stakashka.scm.core.data.Table;
+import stakashka.ssm.api.db.AbstractDatabase;
+import stakashka.ssm.api.db.TypesTemplates;
+import stakashka.ssm.core.data.Column;
+import stakashka.ssm.core.data.DataTypes;
+import stakashka.ssm.core.data.Table;
 
 import java.sql.*;
 import java.util.ArrayList;

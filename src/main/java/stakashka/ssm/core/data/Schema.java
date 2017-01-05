@@ -1,4 +1,4 @@
-package stakashka.scm.core.data;
+package stakashka.ssm.core.data;
 
 import java.util.ArrayList;
 import java.util.List;

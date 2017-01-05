@@ -1,9 +1,9 @@
-package stakashka.scm.core.model;
+package stakashka.ssm.core.model;
 
-import stakashka.scm.api.db.AbstractDatabase;
-import stakashka.scm.api.db.oracle.OracleDatabase;
-import stakashka.scm.api.db.postgres.PostgresDatabase;
-import stakashka.scm.core.data.Schema;
+import stakashka.ssm.api.db.AbstractDatabase;
+import stakashka.ssm.api.db.oracle.OracleDatabase;
+import stakashka.ssm.api.db.postgres.PostgresDatabase;
+import stakashka.ssm.core.data.Schema;
 
 import java.io.FileWriter;
 import java.io.IOException;

@@ -1,7 +1,7 @@
-package stakashka.scm;
+package stakashka.ssm;
 
-import stakashka.scm.core.model.Controller;
-import stakashka.scm.core.model.Controller.Databases;
+import stakashka.ssm.core.model.Controller;
+import stakashka.ssm.core.model.Controller.Databases;
 
 public class Main {
 

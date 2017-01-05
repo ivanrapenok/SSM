@@ -1,4 +1,4 @@
-package stakashka.scm.core.data;
+package stakashka.ssm.core.data;
 
 public class Table {
     private String tableName;
