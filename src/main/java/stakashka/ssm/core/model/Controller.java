@@ -48,6 +48,8 @@ public class Controller {
                 schema = databaseFrom.getSchema();
                 System.out.println(schema.getTablesList());
                 System.out.println(schema.getColumnsList());
+                System.out.println(schema.getConstraintsList());
+                System.out.println(schema.getConstraintColumnsList());
             }
 
             switch (dbTo) {

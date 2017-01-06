@@ -7,10 +7,15 @@ public class Schema {
 
     private List<Table> tablesList;
     private List<Column> columnsList;
+    private List<Constraint> constraintsList;
+    private List<ConstraintColumn> constraintColumnsList;
+
 
     public Schema() {
-        tablesList = new ArrayList<Table>();
-        columnsList = new ArrayList<Column>();
+        tablesList = new ArrayList<>();
+        columnsList = new ArrayList<>();
+        constraintsList = new ArrayList<>();
+        constraintColumnsList = new ArrayList<>();
     }
 
     public List<Table> getTablesList() {
@@ -29,11 +34,29 @@ public class Schema {
         this.columnsList = columnsList;
     }
 
+    public List<Constraint> getConstraintsList() {
+        return constraintsList;
+    }
+
+    public void setConstraintsList(List<Constraint> constraintsList) {
+        this.constraintsList = constraintsList;
+    }
+
+    public List<ConstraintColumn> getConstraintColumnsList() {
+        return constraintColumnsList;
+    }
+
+    public void setConstraintColumnsList(List<ConstraintColumn> constraintColumnsList) {
+        this.constraintColumnsList = constraintColumnsList;
+    }
+
     @Override
     public String toString() {
         return "Schema{" +
                 "tablesList=" + tablesList +
                 ", columnsList=" + columnsList +
+                ", constraintsList=" + constraintsList +
+                ", constraintColumnsList=" + constraintColumnsList +
                 '}';
     }
 }

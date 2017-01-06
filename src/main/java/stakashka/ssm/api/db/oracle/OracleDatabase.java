@@ -2,9 +2,8 @@ package stakashka.ssm.api.db.oracle;
 
 import stakashka.ssm.api.db.AbstractDatabase;
 import stakashka.ssm.api.db.TypesTemplates;
-import stakashka.ssm.core.data.Column;
-import stakashka.ssm.core.data.DataTypes;
-import stakashka.ssm.core.data.Table;
+import stakashka.ssm.core.data.*;
+import stakashka.ssm.core.data.Constraint.ConstraintType;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -71,7 +70,49 @@ public class OracleDatabase extends AbstractDatabase {
     }
 
     @Override
+    protected List<Constraint> getConstraintsList() throws SQLException {
+        List<Constraint> constraintsList = new ArrayList<>();
+        statement = connection.createStatement();
+        resultSet = statement.executeQuery(
+                "select CONSTRAINT_NAME, GENERATED, CONSTRAINT_TYPE, TABLE_NAME, " +
+                        "SEARCH_CONDITION_VC, R_CONSTRAINT_NAME " +
+                        "from sys.all_constraints where owner = '" + schemaFrom + "'"
+        );
+        while (resultSet.next()) {
+            constraintsList.add(new Constraint(
+                    resultSet.getString(1), resultSet.getString(2).equals("GENERATED NAME"),
+                    ConstraintType.valueOf(resultSet.getString(3)), resultSet.getString(4),
+                    resultSet.getString(5), resultSet.getString(6)
+            ));
+        }
+        return constraintsList;
+    }
+
+    @Override
+    protected List<ConstraintColumn> getConstraintColumnsList() throws SQLException {
+        List<ConstraintColumn> columnsList = new ArrayList<>();
+        statement = connection.createStatement();
+        resultSet = statement.executeQuery(
+            "select CONSTRAINT_NAME, TABLE_NAME, COLUMN_NAME, POSITION " +
+                    "from SYS.ALL_CONS_COLUMNS where OWNER = '" + schemaFrom + "'"
+        );
+        while (resultSet.next()) {
+            columnsList.add(new ConstraintColumn(
+                    resultSet.getString(1), resultSet.getString(2),
+                    resultSet.getString(3), resultSet.getInt(4)
+            ));
+        }
+        return columnsList;
+    }
+
+    @Override
     protected String createTableDDL(String tableName, List<Column> columnsList) {
+        return null;
+    }
+
+    @Override
+    protected String createConstraintDDL(Constraint constraint, List<ConstraintColumn> columns,
+                                         Constraint refConstraint, List<ConstraintColumn> refColumns) {
         return null;
     }
 

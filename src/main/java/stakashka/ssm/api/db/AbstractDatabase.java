@@ -1,9 +1,8 @@
 package stakashka.ssm.api.db;
 
-import stakashka.ssm.core.data.Column;
+import stakashka.ssm.core.data.*;
+import stakashka.ssm.core.data.Constraint.ConstraintType;
 import stakashka.ssm.core.data.DataTypes.NormalizedTypes;
-import stakashka.ssm.core.data.Schema;
-import stakashka.ssm.core.data.Table;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -48,7 +47,7 @@ abstract public class AbstractDatabase {
 
     protected void initInverseTypesMapping() throws Exception {
         inverseTypesMapping = new HashMap<>();
-        for (TypesTemplates key: typesMapping.keySet()) {
+        for (TypesTemplates key : typesMapping.keySet()) {
             inverseTypesMapping.put(typesMapping.get(key), key);
         }
         if (inverseTypesMapping.size() != typesMapping.size()) {
@@ -61,6 +60,8 @@ abstract public class AbstractDatabase {
             Schema schema = new Schema();
             schema.setTablesList(getTablesList());
             schema.setColumnsList(getColumnsList());
+            schema.setConstraintsList(getConstraintsList());
+            schema.setConstraintColumnsList(getConstraintColumnsList());
             return schema;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -92,14 +93,36 @@ abstract public class AbstractDatabase {
         for (String table : groupByTables.keySet()) {
             resultDDL += createTableDDL(table, groupByTables.get(table));
         }
-        System.out.println(resultDDL);
 
+        // foreign key must be created last
+        List<Constraint> sortedConstraintList = schema.getConstraintsList().stream()
+                .sorted((c1, c2) -> ConstraintType.compare(c1.getConstraintType(), c2.getConstraintType()))
+                .collect(Collectors.toList());
+        Map<String, List<ConstraintColumn>> columnsMap = schema.getConstraintColumnsList()
+                .stream().collect(Collectors.groupingBy(ConstraintColumn::getConstraintName));
+        for (Constraint constraint : sortedConstraintList) {
+            Constraint refConstraint = null;
+            List<ConstraintColumn> refCol = null;
+            if (constraint.getRefConstraintName() != null) {
+                refConstraint = schema.getConstraintsList().stream()
+                        .filter(con -> con.getConstraintName().equals(constraint.getRefConstraintName()))
+                        .findFirst().get();
+                refCol = columnsMap.get(refConstraint.getConstraintName());
+            }
+            resultDDL += createConstraintDDL(constraint, columnsMap.get(constraint.getConstraintName()), refConstraint, refCol);
+        }
+
+        System.out.println(resultDDL);
         return resultDDL;
     }
 
     protected abstract List<Table> getTablesList() throws SQLException;
 
     protected abstract List<Column> getColumnsList() throws SQLException;
+
+    protected abstract List<Constraint> getConstraintsList() throws SQLException;
+
+    protected abstract List<ConstraintColumn> getConstraintColumnsList() throws SQLException;
 
     protected NormalizedTypes getNormalizedType(TypesTemplates type) {
         NormalizedTypes res = typesMapping.get(type);
@@ -115,4 +138,7 @@ abstract public class AbstractDatabase {
     }
 
     protected abstract String createTableDDL(String tableName, List<Column> columnsList) throws Exception;
+
+    protected abstract String createConstraintDDL(Constraint constraint, List<ConstraintColumn> columns,
+                                                  Constraint refConstraint, List<ConstraintColumn> refColumns);
 }

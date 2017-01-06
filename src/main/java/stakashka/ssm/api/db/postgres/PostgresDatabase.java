@@ -2,13 +2,12 @@ package stakashka.ssm.api.db.postgres;
 
 import stakashka.ssm.api.db.AbstractDatabase;
 import stakashka.ssm.api.db.TypesTemplates;
-import stakashka.ssm.core.data.Column;
-import stakashka.ssm.core.data.DataTypes;
-import stakashka.ssm.core.data.Table;
+import stakashka.ssm.core.data.*;
 
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PostgresDatabase extends AbstractDatabase {
 
@@ -56,6 +55,16 @@ public class PostgresDatabase extends AbstractDatabase {
     }
 
     @Override
+    protected List<Constraint> getConstraintsList() throws SQLException {
+        return null;
+    }
+
+    @Override
+    protected List<ConstraintColumn> getConstraintColumnsList() throws SQLException {
+        return null;
+    }
+
+    @Override
     protected String createTableDDL(String tableName, List<Column> columnsList) throws Exception {
         String res = "";
         res += "CREATE TABLE " + ((schemaTo == null) ? "" : schemaTo + ".") + tableName + " (";
@@ -66,6 +75,49 @@ public class PostgresDatabase extends AbstractDatabase {
         }
         res = res.substring(0, res.length() - 1);
         res += "\n);\n";
+        return res;
+    }
+
+    @Override
+    protected String createConstraintDDL(Constraint constraint, List<ConstraintColumn> columns,
+                                         Constraint refConstraint, List<ConstraintColumn> refColumns) {
+        String res = "ALTER TABLE " + ((schemaTo == null) ? "" : schemaTo + ".") + constraint.getTableName() + " ADD"
+                + (constraint.isGeneratedName() ? "" : " CONSTRAINT " + constraint.getConstraintName()) + " ";
+        switch (constraint.getConstraintType()) {
+            case C:
+                if (!constraint.getSearchCondition().contains("IS NOT NULL")) {
+                    res += "CHECK (" + constraint.getSearchCondition() + ");\n";
+                } else {
+                    return "";
+                }
+                break;
+            case O:
+                break;
+            case P:
+                res += "PRIMARY KEY (";
+                columns = columns.stream().sorted((c1, c2) -> Integer.compare(c1.getPosition(), c2.getPosition()))
+                        .collect(Collectors.toList());
+                for (ConstraintColumn column: columns) {
+                    res += column.getColumnName() + ", ";
+                }
+                res = res.substring(0, res.length() - 2) + ");\n";
+                break;
+            case U:
+                res += "UNIQUE (";
+                columns = columns.stream().sorted((c1, c2) -> Integer.compare(c1.getPosition(), c2.getPosition()))
+                        .collect(Collectors.toList());
+                for (ConstraintColumn column: columns) {
+                    res += column.getColumnName() + ", ";
+                }
+                res = res.substring(0, res.length() - 2) + ");\n";
+            case V:
+                break;
+            case R:
+                res += "FOREIGN KEY (" + columns.get(0).getColumnName() + ") REFERENCES "
+                        + ((schemaTo == null) ? "" : schemaTo + ".") + refConstraint.getTableName()
+                        + " (" + refColumns.get(0).getColumnName() + ");\n";
+                break;
+        }
         return res;
     }
 }
