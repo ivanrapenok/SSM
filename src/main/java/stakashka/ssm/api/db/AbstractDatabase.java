@@ -30,6 +30,7 @@ abstract public class AbstractDatabase {
     public AbstractDatabase(String url, String user, String password, String schemaFrom) throws SQLException {
         this.schemaFrom = schemaFrom;
         initTypesMapping();
+        initDriver();
         try {
             this.connection = DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
@@ -115,6 +116,8 @@ abstract public class AbstractDatabase {
         System.out.println(resultDDL);
         return resultDDL;
     }
+
+    protected abstract void initDriver();
 
     protected abstract List<Table> getTablesList() throws SQLException;
 

@@ -74,13 +74,4 @@ public class Controller {
             e.printStackTrace();
         }
     }
-
-
-    private void initDrivers() {
-        try {
-            Class.forName("oracle.jdbc.driver.OracleDriver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
 }

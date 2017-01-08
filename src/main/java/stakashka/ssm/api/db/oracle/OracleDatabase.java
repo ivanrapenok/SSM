@@ -40,6 +40,15 @@ public class OracleDatabase extends AbstractDatabase {
     }
 
     @Override
+    protected void initDriver() {
+        try {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public List<Table> getTablesList() throws SQLException {
         List<Table> tablesList = new ArrayList<Table>();
         statement = connection.createStatement();

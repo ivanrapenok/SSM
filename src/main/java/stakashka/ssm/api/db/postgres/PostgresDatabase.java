@@ -36,12 +36,17 @@ public class PostgresDatabase extends AbstractDatabase {
         super(url, user, password, schemaFrom);
     }
 
+        @Override
+        protected void initTypesMapping() {
+            typesMapping = new HashMap<TypesTemplates, DataTypes.NormalizedTypes>() {{
+                put(ColumnTypes.NUMERIC, DataTypes.NormalizedTypes.NUMBER);
+                put(ColumnTypes.CHARACTER, DataTypes.NormalizedTypes.VARCHAR);
+            }};
+        }
+
     @Override
-    protected void initTypesMapping() {
-        typesMapping = new HashMap<TypesTemplates, DataTypes.NormalizedTypes>() {{
-            put(ColumnTypes.NUMERIC, DataTypes.NormalizedTypes.NUMBER);
-            put(ColumnTypes.CHARACTER, DataTypes.NormalizedTypes.VARCHAR);
-        }};
+    protected void initDriver() {
+
     }
 
     @Override

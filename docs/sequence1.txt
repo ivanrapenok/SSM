@@ -1,0 +1,45 @@
+@startuml
+actor User
+participant ":Main" as A
+participant ":Controller" as B
+participant ":OracleDatabase" as C
+participant ":PostgreDatabase" as D
+participant ":Schema" as E
+participant "createbase.sql" as H
+database "OrcaleDB" as G
+
+
+
+User -> A: create config
+activate A
+
+A -> B: process
+activate B
+
+B -> C: getSchema
+activate C
+
+C -> G: getMetaData
+C<-- G: metaData
+
+create E
+C -> E
+
+C --> B: Schema
+deactivate C
+
+B -> D: createDDL
+activate D
+
+D -> B: String res
+deactivate D
+
+B --> A: ok
+
+create H
+B -> H
+deactivate B
+
+A --> User: ok
+deactivate A
+@enduml
